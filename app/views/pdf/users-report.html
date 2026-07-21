@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Users Report</title>
+    <style>
+      body { font-family: Arial, sans-serif; color: #1f2937; margin: 24px; }
+      h1 { text-align: center; color: #4f46e5; margin-bottom: 16px; }
+      table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+      th, td { border: 1px solid #d1d5db; padding: 8px 10px; text-align: left; }
+      th { background: #eef2ff; font-weight: bold; }
+      tr:nth-child(even) { background: #f9fafb; }
+    </style>
+  </head>
+  <body>
+    <h1>Users Report</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Website</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{rows}}
+      </tbody>
+    </table>
+  </body>
+</html>
