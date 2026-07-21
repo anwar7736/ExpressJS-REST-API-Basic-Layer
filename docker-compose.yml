@@ -3,36 +3,30 @@ version: "3.9"
 services:
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
 
     container_name: express_app
 
     restart: unless-stopped
 
-    ports:
-      - "3000:3000"
-
     env_file:
       - .env
 
+    expose:
+      - "3000"
+
     depends_on:
-      mongo:
-        condition: service_started
-      redis:
-        condition: service_started
+      - mongo
+      - redis
 
     volumes:
       - .:/app
-      - /app/node_modules
+      - uploads:/app/public/uploads
 
   worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
 
-    container_name: express_worker
+    container_name: email_worker
 
     command: npm run queue
 
@@ -42,14 +36,25 @@ services:
       - .env
 
     depends_on:
-      mongo:
-        condition: service_started
-      redis:
-        condition: service_started
+      - redis
+      - mongo
+
+  nginx:
+    build:
+      context: ./nginx
+
+    container_name: nginx
+
+    restart: unless-stopped
+
+    ports:
+      - "80:80"
+
+    depends_on:
+      - app
 
     volumes:
-      - .:/app
-      - /app/node_modules
+      - uploads:/var/www/uploads
 
   mongo:
     image: mongo:8
@@ -82,3 +87,5 @@ volumes:
   mongo_data:
 
   redis_data:
+
+  uploads:
