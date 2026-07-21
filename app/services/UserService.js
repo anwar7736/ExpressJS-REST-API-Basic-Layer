@@ -1,7 +1,6 @@
 const ResponseUtil = require('@/utils/ResponseUtil');
 const UserRepository = require('@/repositories/UserRepository');
-const UserStoreRequest = require('@/requests/UserStoreRequest');
-const { dispatchWelcomeEmail } = require('@/jobs/UserWelcomeJob');
+const { dispatchWelcomeEmail } = require('@/queues/UserWelcomeJob');
 const { connectToRedis, getRedisClient } = require('@/config/redis');
 const ExportUtil = require('@/utils/ExportUtil');
 
@@ -16,6 +15,7 @@ module.exports = {
       if (client) {
         const cachedUsers = await client.get(cacheKey);
         if (cachedUsers) {
+          console.log("Cache Get");
           return ResponseUtil.success(res, JSON.parse(cachedUsers));
         }
       }
@@ -26,11 +26,21 @@ module.exports = {
     const users = await UserRepository.findAll();
     try {
       const client = getRedisClient();
+
       if (client) {
-        await client.set(cacheKey, JSON.stringify(users), { EX: 300 });
+        await client.set(
+          cacheKey,
+          JSON.stringify(users),
+          "EX",
+          60
+        );
+
+        console.log("Cache saved successfully");
+      } else {
+        console.log("Redis client is null");
       }
     } catch (error) {
-      // ignore cache write failures
+      console.error("Redis SET Error:", error);
     }
 
     return ResponseUtil.success(res, users);
@@ -50,20 +60,6 @@ module.exports = {
     }
 
     return ResponseUtil.success(res, user);
-  },
-
-  store: async (req, res) => {
-    const request = UserStoreRequest.from(req.body);
-    const validation = request.validate();
-
-    if (!validation.isValid) {
-      return ResponseUtil.error(res, validation.errors.join(', '), 422);
-    }
-
-    const user = await UserRepository.create({ ...validation.data, password: 'temporary123' });
-    await dispatchWelcomeEmail(user);
-
-    return ResponseUtil.success(res, user, 201);
   },
 
   update: async (req, res, id) => {

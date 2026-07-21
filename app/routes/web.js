@@ -1,4 +1,5 @@
 const express = require('express');
+const { connectToRedis, getRedisClient } = require('@/config/redis');
 
 const router = express.Router();
 

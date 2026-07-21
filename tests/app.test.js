@@ -1,8 +1,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { MongoMemoryServer } = require('mongodb-memory-server');
-const { connectToDatabase } = require('../app/config/db');
-const createApp = require('../app/app');
+const { connectToDatabase } = require('@/config/db');
+const createApp = require('@/app');
 
 let mongoServer;
 

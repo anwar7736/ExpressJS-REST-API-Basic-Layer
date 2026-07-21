@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon --env-file=.env server.js",
     "start": "node --env-file=.env server.js",
-    "test": "node --test"
+    "queue": "node --env-file=.env ./app/workers/emailWorker.js",
+    "test": "node --env-file=.env --test"
   },
   "keywords": [],
   "author": "",
@@ -17,17 +18,22 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "bullmq": "^5.80.9",
     "ejs": "^6.0.1",
     "exceljs": "^4.4.0",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.6.0",
+    "express-slow-down": "^3.1.0",
+    "ioredis": "^5.11.1",
     "jsonwebtoken": "^9.0.2",
     "module-alias": "^2.3.4",
     "mongoose": "^8.5.0",
     "multer": "^2.2.0",
+    "node-cron": "^4.6.0",
+    "nodemailer": "^9.0.3",
     "nodemon": "^3.1.14",
     "pdfkit": "^0.19.1",
     "puppeteer": "^25.3.0",
-    "redis": "^6.1.0",
     "sharp": "^0.35.3",
     "zod": "^3.25.0"
   },

@@ -6,6 +6,12 @@ const notFoundHandler = require('@/middlewares/notFoundHandler');
 const errorHandler = require('@/middlewares/errorHandler');
 const { connectToDatabase } = require('@/config/db');
 const { connectToRedis } = require('@/config/redis');
+const cron = require('node-cron');
+const { runUserCleanup } = require('@/crons/UserCleanupCron');
+
+// 1. Run a cron job
+// This specific task runs every 5 seconds
+// cron.schedule('*/5 * * * * *', runUserCleanup);
 
 module.exports = function createApp() {
   const app = express();
@@ -21,9 +27,9 @@ module.exports = function createApp() {
     res.json({ status: 'ok', service: 'node-express-backend' });
   });
 
-  connectToDatabase().catch((error) => {
-    console.error('Database connection failed', error);
-  });
+  // connectToDatabase().catch((error) => {
+  //   console.error('Database connection failed', error);
+  // });
 
   connectToRedis().catch((error) => {
     console.error('Redis connection failed', error);

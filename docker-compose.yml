@@ -1,0 +1,84 @@
+version: "3.9"
+
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: express_app
+
+    restart: unless-stopped
+
+    ports:
+      - "3000:3000"
+
+    env_file:
+      - .env
+
+    depends_on:
+      mongo:
+        condition: service_started
+      redis:
+        condition: service_started
+
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: express_worker
+
+    command: npm run queue
+
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    depends_on:
+      mongo:
+        condition: service_started
+      redis:
+        condition: service_started
+
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  mongo:
+    image: mongo:8
+
+    container_name: mongodb
+
+    restart: unless-stopped
+
+    ports:
+      - "27017:27017"
+
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:7
+
+    container_name: redis
+
+    restart: unless-stopped
+
+    ports:
+      - "6379:6379"
+
+    volumes:
+      - redis_data:/data
+
+volumes:
+
+  mongo_data:
+
+  redis_data:
